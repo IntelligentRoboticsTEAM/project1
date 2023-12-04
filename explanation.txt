@@ -1,20 +1,39 @@
 To solve this problem we have created two .cpp files.
 
-One is the 'people_detector' node which subscribes to the /scan topic and uses the callback.
-The other is the utils.cpp file which contains the methods used in the callback to create 
-clusters of points and to compute the average of the clusters (or centroids) and to convert the 
-polar coordinates into cartesian ones.
+First, the 'people_detector' node subscribes to the /scan topic and utilizes the callback function. 
+Then, we have the utils.cpp file, housing methods employed in the callback. 
+These methods create point clusters, determine their centroids (or average positions), and handle the conversion from polar to Cartesian coordinates.
 
-The clustering of the points is done in the polar system.
-Mainly, we use two thresholds:
+Our point clustering operates within the polar system and relies on two primary thresholds: 
     - a distance threshold (for the distance from robot reference frame to feet position)
-    - an angular threshold (exploiting the sequence of "inf" values in the range vector)
+    - an angular threshold (leveraging the sequence of "inf" values within the range vector)
 
-We then compute the average (or centroid) of every cluster.
-And only after this operation we procede by converting the polar coordinates into cartesian ones.
-This brings less accuracy to the result, but avoids the conversion and computation of the all the 
-scanned points, resulting into a faster performance.
+Following the clustering process, we compute the centroid for each cluster. 
+Only after this step do we proceed with the conversion from polar to Cartesian coordinates. 
+While this approach sacrifices a bit of accuracy, it significantly enhances performance by bypassing the need to convert and compute all scanned points.
 
 We ran the program both on an Ubuntu 20.04 Virtual Machine (mainly used to run rviz) and on the
 Docker ros-noetic container (which does not run rviz, since it does not have any UI).
 
+Our results are:
+[ INFO] [1701716335.128599312]: Values in the array:
+[ INFO] [1701716335.128606121]: --------------------
+[ INFO] [1701716335.128613754]: [0]: (X = 1.933147, Y = 0.000000)
+[ INFO] [1701716335.128681113]: --------------------
+[ INFO] [1701716335.128695840]: [1]: (X = 1.227572, Y = 1.911830)
+[ INFO] [1701716335.128702745]: --------------------
+[ INFO] [1701716335.128709250]: [2]: (X = -0.804836, Y = 1.758599)
+
+Correct results are:
+1st person in X=2 Y=0
+2nd person in X=1 Y=2
+3rd person in X=1 Y=-2
+
+For the first two persons we get accurate results. The third person reflects negative coordinates.
+This outcome comes from an error introduced by trying to handle the circular nature of the data of the ranges' vector during the clustering process.
+
+The version of the code pushed in the lab is also available on our github page:
+https://github.com/IntelligentRoboticsTEAM/project1
+Another version, abandoned due to some segmentation faults problem, which was meant to implement a 
+more sophisticated clustering method (kmeans) is available on this other github repo:
+https://github.com/IntelligentRoboticsTEAM/Lab4
