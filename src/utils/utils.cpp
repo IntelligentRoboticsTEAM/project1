@@ -31,7 +31,7 @@ std::vector<std::vector<float>> clusterRanges(const std::vector<float>& ranges, 
 
     // Checks if beginning and end elements belong to same cluster
     if (!currentCluster.empty()) {
-        if (std::abs(ranges[0] - currentCluster.back()) <= th1 && (std::abs(0 - last_index <= th2) || std::abs(0 - last_index <= th2 - ranges.size()))) {
+        if (std::abs(ranges[0] - currentCluster.back()) <= th1 && (std::abs(0 - last_index) <= th2 || std::abs(0 - last_index) <= th2 - ranges.size())) {
             currentCluster.insert(currentCluster.end(), ranges.begin(), ranges.begin() + last_index + 1);
         }
         clusters.push_back(currentCluster); // adding last cluster
@@ -45,9 +45,9 @@ void computeAvg(const std::vector<std::vector<float>>& rangeClusters,
                 float angle_min, float angle_increment) 
 {
     
-    for (int idx = 0; idx < rangeClusters.size(); ++idx) 
+    for (int theta = 0; theta < rangeClusters.size(); theta++) 
     {
-        const auto& cluster = rangeClusters[idx];
+        const auto& cluster = rangeClusters[theta];
         float sum = 0.0;
         int count = 0;
 
@@ -60,11 +60,9 @@ void computeAvg(const std::vector<std::vector<float>>& rangeClusters,
         if (count > 0) 
         {
             float average = sum / count;
-            float clusterAngle = angle_min + idx * angle_increment;
 
-            std::pair<float, float> cartesian = polarToCartesian(average, clusterAngle);
+            std::pair<float, float> cartesian = polarToCartesian(average, theta);
             output.push_back(cartesian);
         }
     }
 }
-

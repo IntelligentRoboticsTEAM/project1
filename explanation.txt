@@ -1,0 +1,20 @@
+To solve this problem we have created two .cpp files.
+
+One is the 'people_detector' node which subscribes to the /scan topic and uses the callback.
+The other is the utils.cpp file which contains the methods used in the callback to create 
+clusters of points and to compute the average of the clusters (or centroids) and to convert the 
+polar coordinates into cartesian ones.
+
+The clustering of the points is done in the polar system.
+Mainly, we use two thresholds:
+    - a distance threshold (for the distance from robot reference frame to feet position)
+    - an angular threshold (exploiting the sequence of "inf" values in the range vector)
+
+We then compute the average (or centroid) of every cluster.
+And only after this operation we procede by converting the polar coordinates into cartesian ones.
+This brings less accuracy to the result, but avoids the conversion and computation of the all the 
+scanned points, resulting into a faster performance.
+
+We ran the program both on an Ubuntu 20.04 Virtual Machine (mainly used to run rviz) and on the
+Docker ros-noetic container (which does not run rviz, since it does not have any UI).
+

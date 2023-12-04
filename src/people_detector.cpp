@@ -10,8 +10,8 @@ void callback(const sensor_msgs::LaserScan::ConstPtr& msg)
     const float angle_min = msg->angle_min;
 
     // 1) cluster the polar coordinates
-    float th1 = 0.3; 
-    int th2 = 12;
+    float th1 = 0.2;    // distance between two pts
+    int th2 = 13;       // minimum number of "inf" that separate one cluster from another
     std::vector<std::vector<float>> rangeClusters = clusterRanges(ranges, th1, th2);
 
 
@@ -23,8 +23,10 @@ void callback(const sensor_msgs::LaserScan::ConstPtr& msg)
 
     // 3) publish clusters cartesian coordinates
     ROS_INFO("Values in the array:");
+
     for (size_t i = 0; i < avgCartesianCoords.size(); ++i) {
-        ROS_INFO("[%zu]: (%f, %f)", i, (float)avgCartesianCoords[i].first, (float)avgCartesianCoords[i].second);
+        ROS_INFO("--------------------");
+        ROS_INFO("[%zu]: (X = %f, Y = %f)", i, (float)avgCartesianCoords[i].first, (float)avgCartesianCoords[i].second);
     }
     
 }
@@ -39,7 +41,7 @@ int main(int argc, char **argv)
 
     ros::Subscriber sub = n.subscribe("/scan", 1000, callback);
 
-    ros::Rate rate(10);
+    ros::Rate rate(1);
     while(ros::ok())
     {
         ros::spinOnce();
